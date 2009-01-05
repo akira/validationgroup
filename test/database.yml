@@ -1,0 +1,18 @@
+sqlite:
+  :adapter: sqlite
+  :dbfile: validation_group_plugin.sqlite.db
+sqlite3:
+  :adapter: sqlite3
+  :dbfile: validation_group_plugin.sqlite3.db
+postgresql:
+  :adapter: postgresql
+  :username: postgres
+  :password: postgres
+  :database: validation_group_plugin_test
+  :min_messages: ERROR
+mysql:
+  :adapter: mysql
+  :host: localhost
+  :username: root
+  :password:
+  :database: validation_group_plugin_test
