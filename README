@@ -3,9 +3,9 @@ ValidationGroup
 
 When doing multipage forms that spread a models fields over several pages, validation becomes more difficult.  We would like to validate each step of the form, however, the rails validation run validation on all the fields.  This plugin enables you to define validation groups with certain fields, and then only run validation on those groups.
 
-To install, type: ruby script/plugin install http://validationgroup.rubyforge.org/svn/trunk/
+To install, type: git clone git://github.com/akira/validationgroup.git vendor/plugins/validationgroup && rm -rf vendor/plugins/validationgroup/.git
 
-Home page for plugin is: http://rubyforge.org/projects/validationgroup/
+Home page for plugin is: http://alexkira.blogspot.com/2007/09/rails-validation-using-validation.html
 
 Example
 =======
