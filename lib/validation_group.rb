@@ -7,21 +7,30 @@ module ValidationGroup
         base.class_eval do
           cattr_accessor :validation_group_classes
           self.validation_group_classes = {}
+					
+					def self.validation_group_names; @validation_group_names; end
+					def self.validation_groups
+						self.validation_group_classes[self] || {}
+					end
         end
       end
 
       def validation_group(name, options={})
         self_groups = (self.validation_group_classes[self] ||= {})
-        self_groups[name] = options[:fields] || []
+        self_groups[name.to_sym] = options[:fields] || []
+				@validation_group_names ||= []
+				@validation_group_names << name.to_sym
 
         unless included_modules.include?(InstanceMethods)
           attr_reader :current_validation_group
           include InstanceMethods
+					alias_method_chain :valid?, :validation_group
         end
       end
     end
 
     module InstanceMethods # included in every model which calls validation_group
+			
       def enable_validation_group(group)
         # Check if given validation group is defined for current class
         # or one of its ancestors
@@ -45,6 +54,11 @@ module ValidationGroup
       def validation_group_enabled?
         respond_to?(:current_validation_group) && !current_validation_group.nil?
       end
+			
+			def valid_with_validation_group?(group=nil)
+				self.enable_validation_group(group) if group
+				valid_without_validation_group?
+			end
     end
 
     module Errors # included in ActiveRecord::Errors
@@ -88,3 +102,6 @@ module ValidationGroup
     end
   end
 end
+
+ActiveRecord::Base.send(:extend, ValidationGroup::ActiveRecord::ActsMethods)
+ActiveRecord::Errors.send :include, ValidationGroup::ActiveRecord::Errors

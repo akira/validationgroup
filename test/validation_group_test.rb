@@ -8,6 +8,27 @@ class ValidationGroupModel < ActiveRecord::Base
 end
 
 class ValidationGroupTest < Test::Unit::TestCase
+	def test_validation_group_names_appear_in_order
+		names = ValidationGroupModel.validation_group_names
+		assert_not_nil names
+		assert_equal 2, names.size
+		assert_equal :step1, names[0]
+		assert_equal :step2, names[1]
+	end
+	
+	def test_validation_group_fields_for_names
+		names = ValidationGroupModel.validation_group_names
+		groups = ValidationGroupModel.validation_groups
+		assert_not_nil groups
+		fields = groups[names[0]]
+		assert_equal 2, fields.size
+		assert fields.include?(:name)
+		assert fields.include?(:description)
+		fields = groups[names[1]]
+		assert_equal 1, fields.size
+		assert fields.include?(:address)
+	end
+	
   def test_validation_no_groups_fail
     @model = ValidationGroupModel.new
     assert !@model.valid?
