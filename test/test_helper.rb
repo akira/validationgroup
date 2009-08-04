@@ -7,9 +7,9 @@ require 'active_record'
 require 'test/unit'
 require 'validation_group'
 
-# #jeffp: removed fixture loading code - unnecessary #jeffp: removed
-# environment.rb reference for gemification purposes #jeffp: added code to test
-# in sqlite memory database!
+# jeffp: removed fixture loading code - unnecessary 
+# jeffp: removed environment.rb reference for gemification purposes 
+# jeffp: added code to test in sqlite memory database - speedy tests
 
 db_adapter = ENV['DB'] || begin
   require 'rubygems'

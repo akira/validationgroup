@@ -73,4 +73,45 @@ class ValidationGroupTest < Test::Unit::TestCase
       @model.enable_validation_group :invalid
     end    
   end    
+	
+  def test_should_validate_no_groups
+    @model = ValidationGroupModel.new
+    assert @model.should_validate?(:name)
+    assert @model.should_validate?(:description)
+    assert @model.should_validate?(:address)
+    assert @model.should_validate?(:email)
+  end
+	
+  def test_should_validate_group1
+    @model = ValidationGroupModel.new
+    @model.enable_validation_group(:step1)
+    assert @model.should_validate?(:name)
+    assert @model.should_validate?(:description)
+    assert !@model.should_validate?(:address)
+    assert !@model.should_validate?(:email)
+  end
+
+  def test_valid_query_sets_current
+    @model = ValidationGroupModel.new
+    @model.valid?(:step2)
+    assert_equal :step2, @model.current_validation_group
+    @model.valid?(:step1)
+    assert_equal :step1, @model.current_validation_group
+  end
+	
+  def test_valid_group1_fails
+    @model = ValidationGroupModel.new
+    assert !@model.valid?(:step1)
+  end
+	
+  def test_valid_group1_passes_and_group2_fails_then_passes
+    @model = ValidationGroupModel.new
+    @model.name = 'MyModel'
+    @model.description = 'My model'
+    assert @model.valid?(:step1)
+    assert !@model.valid?(:step2)
+    @model.address = 'uri:my_model'
+    assert @model.valid?
+  end
+	
 end
