@@ -8,32 +8,33 @@ module ValidationGroup
           cattr_accessor :validation_group_classes
           self.validation_group_classes = {}
 					
-					def self.validation_group_order; @validation_group_order; end
-					def self.validation_groups(all_classes = false)
-						return (self.validation_group_classes[self] || {}) unless all_classes
-						klasses = ValidationGroup::Util.current_and_ancestors(self).reverse
-						returning Hash.new do |hash|
-							klasses.each do |klass|
-								hash.merge! self.validation_group_classes[klass]
-							end
-						end
-					end
+          def self.validation_group_order; @validation_group_order; end
+          def self.validation_groups(all_classes = false)
+            return (self.validation_group_classes[self] || {}) unless all_classes
+            klasses = ValidationGroup::Util.current_and_ancestors(self).reverse
+            returning Hash.new do |hash|
+              klasses.each do |klass|
+                hash.merge! self.validation_group_classes[klass]
+              end
+            end
+          end
         end
       end
 
       def validation_group(name, options={})
         self_groups = (self.validation_group_classes[self] ||= {})
         self_groups[name.to_sym] = options[:fields] || []
-				#jeffp: capture the declaration order for this class only (no superclasses)
-				@validation_group_order ||= []
-				@validation_group_order << name.to_sym
+        # #jeffp: capture the declaration order for this class only (no
+        # superclasses)
+        @validation_group_order ||= []
+        @validation_group_order << name.to_sym
 
         unless included_modules.include?(InstanceMethods)
-					#jeffp: added reader for current_validation_fields
+          # #jeffp: added reader for current_validation_fields
           attr_reader :current_validation_group, :current_validation_fields
           include InstanceMethods
-					#jeffp: add valid?(group = nil), see definition below
-					alias_method_chain :valid?, :validation_group
+          # #jeffp: add valid?(group = nil), see definition below
+          alias_method_chain :valid?, :validation_group
         end
       end
     end
@@ -41,17 +42,17 @@ module ValidationGroup
     module InstanceMethods # included in every model which calls validation_group
 			
       def enable_validation_group(group)
-        # Check if given validation group is defined for current class
-        # or one of its ancestors
+        # Check if given validation group is defined for current class or one of
+        # its ancestors
         group_classes = self.class.validation_group_classes
         found = ValidationGroup::Util.current_and_ancestors(self.class).
-					find do |klass|
-						group_classes[klass] && group_classes[klass].include?(group)
-					end
+          find do |klass|
+          group_classes[klass] && group_classes[klass].include?(group)
+        end
         if found
           @current_validation_group = group
-					#jeffp: capture current fields for performance optimization
-					@current_validation_fields = group_classes[found][group]
+          # #jeffp: capture current fields for performance optimization
+          @current_validation_fields = group_classes[found][group]
         else
           raise ArgumentError, "No validation group of name :#{group}"
         end
@@ -59,38 +60,41 @@ module ValidationGroup
 
       def disable_validation_group
         @current_validation_group = nil
-				#jeffp: delete fields
-				@current_validation_fields = nil
+        # #jeffp: delete fields
+        @current_validation_fields = nil
       end
 			
-			#jeffp: optimizer for someone writing custom :validate method -- no need to validate fields outside the current validation group
-			# note: could also use in validation modules to improve performance
-			def should_validate?(attribute)
-				@current_validation_fields && @current_validation_fields.include?(attribute.to_sym)
-			end
+      # #jeffp: optimizer for someone writing custom :validate method -- no need
+      # to validate fields outside the current validation group note: could also
+      # use in validation modules to improve performance
+      def should_validate?(attribute)
+        @current_validation_fields && @current_validation_fields.include?(attribute.to_sym)
+      end
 
       def validation_group_enabled?
         respond_to?(:current_validation_group) && !current_validation_group.nil?
       end
 			
-			#eliminates need to use :enable_validation_group before :valid? call -- nice
-			def valid_with_validation_group?(group=nil)
-				self.enable_validation_group(group) if group
-				valid_without_validation_group?
-			end
+      # #eliminates need to use :enable_validation_group before :valid? call --
+      # nice
+      def valid_with_validation_group?(group=nil)
+        self.enable_validation_group(group) if group
+        valid_without_validation_group?
+      end
     end
 
     module Errors # included in ActiveRecord::Errors
       def add_with_validation_group(attribute,
-                                    msg = @@default_error_messages[:invalid], *args,
-                                    &block)
+          msg = @@default_error_messages[:invalid], *args,
+          &block)
         add_error = true
         if @base.validation_group_enabled?
-					#jeffp: use of should_validate?, note optimized with @current_validation_fields -- compare to previous code
-					add_error = false unless @base.should_validate?(attribute.to_sym)
-				end
-				add_without_validation_group(attribute, msg, *args, &block) if add_error
-			end
+          # #jeffp: use of should_validate?, note optimized with
+          # @current_validation_fields -- compare to previous code
+          add_error = false unless @base.should_validate?(attribute.to_sym)
+        end
+        add_without_validation_group(attribute, msg, *args, &block) if add_error
+      end
 			
       def self.included(base) #:nodoc:
         base.class_eval do
@@ -101,8 +105,8 @@ module ValidationGroup
   end
 
   module Util
-    # Return array consisting of current and its superclasses
-    # down to and including base_class.
+    # Return array consisting of current and its superclasses down to and
+    # including base_class.
     def self.current_and_ancestors(current)
       returning [] do |klasses|
         klasses << current
@@ -116,6 +120,7 @@ module ValidationGroup
   end
 end
 
-#jeffp:  moved from init.rb for gemification purposes -- require 'validation_group' loads everything
+# #jeffp:  moved from init.rb for gemification purposes -- require
+# 'validation_group' loads everything
 ActiveRecord::Base.send(:extend, ValidationGroup::ActiveRecord::ActsMethods)
 ActiveRecord::Errors.send :include, ValidationGroup::ActiveRecord::Errors
