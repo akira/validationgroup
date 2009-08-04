@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alex Kira"]
-  s.date = %q{2009-07-27}
+  s.date = %q{2009-07-28}
   s.description = %q{Validation groups for ActiveRecord}
   s.email = %q{}
   s.files = ["lib/validation_group.rb", "test/test_helper.rb", "test/validation_group_test.rb", "tasks/validation_group_tasks.rake", "CHANGELOG.rdoc", "init.rb", "install.rb", "uninstall.rb", "MIT-LICENSE", "Rakefile", "README", ".gitignore"]
