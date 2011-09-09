@@ -7,6 +7,10 @@ class ValidationGroupModel < ActiveRecord::Base
   validation_group :step2, :fields=>[:address]     
 end
 
+class PlainModel < ActiveRecord::Base
+  validates_presence_of :name
+end
+
 class ValidationGroupTest < Test::Unit::TestCase
   def test_validation_group_names_appear_in_order
     order = ValidationGroupModel.validation_group_order
@@ -113,5 +117,10 @@ class ValidationGroupTest < Test::Unit::TestCase
     @model.address = 'uri:my_model'
     assert @model.valid?
   end
-	
+  
+  def test_validation_for_models_without_validation_group
+    @model = PlainModel.new
+    assert !@model.valid?
+    assert_equal 1, @model.errors.size
+  end  	
 end

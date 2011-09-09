@@ -5,4 +5,8 @@ ActiveRecord::Schema.define(:version => 0) do
     t.column :address,    :string, :limit => 255    
     t.column :email,    :string, :limit => 255    
   end
+  
+  create_table :plain_models, :force => true do |t|
+    t.column :name,        :string, :limit => 255
+  end  
 end

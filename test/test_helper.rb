@@ -37,10 +37,14 @@ connection.create_table(:validation_group_models, :force=>true) do |t|
   t.string :address
   t.string :email
 end
-connection.create_table(:user, :force=>true) do |t|
-  t.string :first_name
-  t.string :last_name
-  t.string :username
+connection.create_table(:validation_group_models, :force=>true) do |t|
+  t.string :name
+  t.string :description
+  t.string :address
+  t.string :email
+end
+connection.create_table(:plain_models, :force=>true) do |t|
+  t.string :name
 end
 
 class User < ActiveRecord::Base
