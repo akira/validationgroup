@@ -1,7 +1,7 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
+require 'rubygems/package_task'
+require 'rdoc/task'
 
 spec = Gem::Specification.new do |s|
   s.name = 'validation_group'
@@ -31,7 +31,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 desc 'Generate documentation for the validation_group plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'ValidationGroup'
   rdoc.options << '--line-numbers' << '--inline-source'
@@ -46,7 +46,7 @@ task :gemspec do
   end
 end
  
-Rake::GemPackageTask.new(spec) do |p|
+Gem::PackageTask.new(spec) do |p|
   p.gem_spec = spec
   p.need_tar = true
   p.need_zip = true
