@@ -28,7 +28,7 @@ if db_adapter.nil?
 end
 
 ActiveRecord::Base.establish_connection({'adapter' => db_adapter, 'database' => ':memory:'})
-ActiveRecord::Base.logger = Logger.new("#{File.dirname(__FILE__)}/active_record.log")
+#ActiveRecord::Base.logger = Logger.new("#{File.dirname(__FILE__)}/active_record.log")
 
 connection = ActiveRecord::Base.connection
 connection.create_table(:validation_group_models, :force=>true) do |t|

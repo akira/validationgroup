@@ -104,7 +104,7 @@ module ValidationGroup
     # Return array consisting of current and its superclasses down to and
     # including base_class.
     def self.current_and_ancestors(current)
-      returning [] do |klasses|
+      [].tap do |klasses|
         klasses << current
         root = current.base_class
         until current == root
@@ -119,4 +119,4 @@ end
 # jeffp:  moved from init.rb for gemification purposes -- 
 # require 'validation_group' loads everything now, init.rb requires 'validation_group' only
 ActiveRecord::Base.send(:extend, ValidationGroup::ActiveRecord::ActsMethods)
-ActiveRecord::Errors.send :include, ValidationGroup::ActiveRecord::Errors
+ActiveModel::Errors.send :include, ValidationGroup::ActiveRecord::Errors
