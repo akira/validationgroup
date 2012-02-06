@@ -46,6 +46,20 @@ class ValidationGroupTest < Test::Unit::TestCase
     assert_equal 2, @model.errors.size    
   end
 
+  def test_validation_group1_add_error
+    @model = ValidationGroupModel.new(:name=>"Name", :description=>"Description")
+    @model.enable_validation_group :step1
+    @model.errors.add(:name, "Name is invalid")
+    assert !@model.errors.blank?
+  end
+
+  def test_validation_group1_add_error_empty_msg
+    @model = ValidationGroupModel.new(:name=>"Name", :description=>"Description")
+    @model.enable_validation_group :step1
+    @model.errors.add(:name)
+    assert !@model.errors.blank?
+  end
+
   def test_validation_group1_pass
     @model = ValidationGroupModel.new(:name=>"Name", :description=>"Description")
     @model.enable_validation_group :step1
