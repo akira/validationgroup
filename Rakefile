@@ -5,7 +5,7 @@ require 'rdoc/task'
 
 spec = Gem::Specification.new do |s|
   s.name = 'validation_group'
-  s.version = '0.1.2'
+  s.version = '0.1.3'
   s.platform = Gem::Platform::RUBY
   s.description = 'Validation groups for ActiveRecord'
   s.summary = 'Validation groups for ActiveRecord'
