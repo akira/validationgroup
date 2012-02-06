@@ -1,5 +1,5 @@
-ValidationGroup
-===============
+= ValidationGroup
+
 
 When doing multipage forms that spread a models fields over several pages, validation becomes more difficult.  We would like to validate each step of the form, however, the rails validation run validation on all the fields.  This plugin enables you to define validation groups with certain fields, and then only run validation on those groups.
 
@@ -7,27 +7,26 @@ Version:  Rails 3.  To use on Rails 2.x versions, use forked copy from https://g
 
 To install:
 
-  Add to your Gemfile:  
+Add to your Gemfile:  
 
-    gem 'validation_group', :git=>'git://github.com/akira/validationgroup.git'
+  gem 'validation_group'
 
-Example
-=======
+= Example
 
-class User < ActiveRecord::Base
-  validates_presence_of :name, :description, :address, :email
+  class User < ActiveRecord::Base
+    validates_presence_of :name, :description, :address, :email
   
-  validation_group :step1, :fields=>[:name, :description]
-  validation_group :step2, :fields=>[:address]     
-end
+    validation_group :step1, :fields=>[:name, :description]
+    validation_group :step2, :fields=>[:address]     
+  end
 
 This will run validation on :step1 fields
-@user = User.new
-@user.enable_validation_group :step1
-@user.valid?
+  @user = User.new
+  @user.enable_validation_group :step1
+  @user.valid?
 
 You can later disable validation groups by calling:
-@user.disable_validation_group
+  @user.disable_validation_group
 
 
 Copyright (c) 2007 Alex Kira, released under the MIT license
