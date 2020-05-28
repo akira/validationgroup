@@ -33,13 +33,16 @@ module ValidationGroup
           # jeffp: added reader for current_validation_fields
           attr_reader :current_validation_group, :current_validation_fields
           include InstanceMethods
-          # jeffp: add valid?(group = nil), see definition below
-          base.prepend ValidWithValidationGroup
         end
       end
     end
 
     module InstanceMethods # included in every model which calls validation_group
+
+      def self.included(base)
+        # jeffp: add valid?(group = nil), see definition below
+        base.prepend ValidWithValidationGroup
+      end
 
       def enable_validation_group(group)
         # Check if given validation group is defined for current class or one of
