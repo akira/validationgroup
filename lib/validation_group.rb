@@ -7,7 +7,7 @@ module ValidationGroup
         base.class_eval do
           cattr_accessor :validation_group_classes
           self.validation_group_classes = {}
-					
+
           def self.validation_group_order; @validation_group_order; end
           def self.validation_groups(all_classes = false)
             return (self.validation_group_classes[self] || {}) unless all_classes
@@ -33,14 +33,17 @@ module ValidationGroup
           # jeffp: added reader for current_validation_fields
           attr_reader :current_validation_group, :current_validation_fields
           include InstanceMethods
-          # jeffp: add valid?(group = nil), see definition below
-          alias_method_chain :valid?, :validation_group
         end
       end
     end
 
     module InstanceMethods # included in every model which calls validation_group
-			
+
+      def self.included(base)
+        # jeffp: add valid?(group = nil), see definition below
+        base.prepend ValidWithValidationGroup
+      end
+
       def enable_validation_group(group)
         # Check if given validation group is defined for current class or one of
         # its ancestors
@@ -63,7 +66,7 @@ module ValidationGroup
         # jeffp: delete fields
         @current_validation_fields = nil
       end
-			
+
       # jeffp: optimizer for someone writing custom :validate method -- no need
       # to validate fields outside the current validation group note: could also
       # use in validation modules to improve performance
@@ -74,28 +77,21 @@ module ValidationGroup
       def validation_group_enabled?
         respond_to?(:current_validation_group) && !current_validation_group.nil?
       end
-			
+    end
+
+    module ValidWithValidationGroup
       # eliminates need to use :enable_validation_group before :valid? call --
-      # nice
-      def valid_with_validation_group?(group=nil)
+      def valid?(group=nil)
         self.enable_validation_group(group) if group
-        valid_without_validation_group?
+        super
       end
     end
 
     module Errors # included in ActiveRecord::Errors
-      def add_with_validation_group(attribute,
-          msg = nil, *args,
-          &block)
+      def add(attribute, msg = nil, *args, &block)
         # jeffp: setting @current_validation_fields and use of should_validate? optimizes code
         add_error = @base.respond_to?(:should_validate?) ? @base.should_validate?(attribute.to_sym) : true
-        add_without_validation_group(attribute, msg, *args, &block) if add_error
-      end
-			
-      def self.included(base) #:nodoc:
-        base.class_eval do
-          alias_method_chain :add, :validation_group
-        end
+        super if add_error
       end
     end
   end
@@ -116,7 +112,7 @@ module ValidationGroup
   end
 end
 
-# jeffp:  moved from init.rb for gemification purposes -- 
+# jeffp:  moved from init.rb for gemification purposes --
 # require 'validation_group' loads everything now, init.rb requires 'validation_group' only
 ActiveRecord::Base.send(:extend, ValidationGroup::ActiveRecord::ActsMethods)
-ActiveModel::Errors.send :include, ValidationGroup::ActiveRecord::Errors
+ActiveModel::Errors.prepend ValidationGroup::ActiveRecord::Errors

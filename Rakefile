@@ -12,7 +12,6 @@ spec = Gem::Specification.new do |s|
   
   s.files = FileList['{lib,test,tasks}/**/*'] + %w(CHANGELOG.rdoc init.rb install.rb uninstall.rb MIT-LICENSE Rakefile README .gitignore) - FileList['**/*.log']
   s.require_path = 'lib'
-  s.has_rdoc = true
   s.test_files = Dir['test/*_test.rb']
   
   s.author = 'Alex Kira'

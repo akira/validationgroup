@@ -11,21 +11,9 @@ require 'validation_group'
 # jeffp: removed environment.rb reference for gemification purposes 
 # jeffp: added code to test in sqlite memory database - speedy tests
 
-db_adapter = ENV['DB'] || begin
-  require 'rubygems'
-  require 'sqlite'
-  'sqlite'
-rescue MissingSourceFile
-  begin
-    require 'sqlite3'
-    'sqlite3'
-  rescue MissingSourceFile
-  end
-end
-
-if db_adapter.nil?
-  raise "No DB Adapter selected. Pass the DB= to pick one, or install Sqlite or Sqlite3."
-end
+db_adapter = 'sqlite3'
+require 'rubygems'
+require 'sqlite3'
 
 ActiveRecord::Base.establish_connection({'adapter' => db_adapter, 'database' => ':memory:'})
 #ActiveRecord::Base.logger = Logger.new("#{File.dirname(__FILE__)}/active_record.log")
