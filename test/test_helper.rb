@@ -1,8 +1,10 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 
 require 'rubygems'
+require 'simplecov'
+SimpleCov.minimum_coverage 89
+SimpleCov.start 'rails'
 
-gem 'activerecord', ENV['AR_VERSION'] ? "=#{ENV['AR_VERSION']}" : '>=2.1.0'
 require 'active_record'
 require 'test/unit'
 require 'validation_group'

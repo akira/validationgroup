@@ -87,8 +87,8 @@ module ValidationGroup
       end
     end
 
-    module Errors # included in ActiveRecord::Errors
-      def add(attribute, msg = nil, *args, &block)
+    module Errors # included in ActiveModel::Errors
+      def add(attribute, type = :invalid, **options)
         # jeffp: setting @current_validation_fields and use of should_validate? optimizes code
         add_error = @base.respond_to?(:should_validate?) ? @base.should_validate?(attribute.to_sym) : true
         super if add_error
